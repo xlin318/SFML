@@ -36,6 +36,8 @@
 
 #include <SFML/System/String.hpp>
 
+#include <memory>
+#include <variant>
 #include <vector>
 
 
@@ -81,6 +83,20 @@ public:
     Text(const Font& font, String string = "", unsigned int characterSize = 30);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct the text from a string, font and size
+    ///
+    /// Construct as above but using a shared pointer to a font
+    /// which guarantees the font remains alive for the lifetime
+    /// of the text object.
+    ///
+    /// \param string         Text assigned to the string
+    /// \param font           Font used to draw the string
+    /// \param characterSize  Base size of characters, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    Text(std::shared_ptr<const Font> font, String string = "", unsigned int characterSize = 30);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Disallow construction from a temporary font
     ///
     ////////////////////////////////////////////////////////////
@@ -123,6 +139,18 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void setFont(const Font& font);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the text's font
+    ///
+    /// Same as above but using a shared pointer to a font
+    /// which guarantees the font remains alive for the lifetime
+    /// of the text object.
+    ///
+    /// \see getFont
+    ///
+    ////////////////////////////////////////////////////////////
+    void setFont(std::shared_ptr<const Font> font);
 
     ////////////////////////////////////////////////////////////
     /// \brief Disallow setting from a temporary font
@@ -406,8 +434,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
+    using FontPtr = std::variant<const Font*, std::shared_ptr<const Font>>;
     String                m_string;                                    //!< String to display
-    const Font*           m_font{};                                    //!< Font used to display the string
+    FontPtr               m_font;                                      //!< Font used to display the string
     unsigned int          m_characterSize{30};                         //!< Base size of characters, in pixels
     float                 m_letterSpacingFactor{1.f};                  //!< Spacing factor between letters
     float                 m_lineSpacingFactor{1.f};                    //!< Spacing factor between lines

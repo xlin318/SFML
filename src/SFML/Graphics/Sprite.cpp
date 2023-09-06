@@ -43,12 +43,29 @@ Sprite::Sprite(const Texture& texture)
 
 
 ////////////////////////////////////////////////////////////
+Sprite::Sprite(std::shared_ptr<const Texture> texture)
+{
+    setTexture(std::move(texture), true);
+}
+
+
+////////////////////////////////////////////////////////////
 Sprite::Sprite(const Texture& texture, const IntRect& rectangle)
 {
     // Compute the texture area
     setTextureRect(rectangle);
     // Assign texture
     setTexture(texture, false);
+}
+
+
+////////////////////////////////////////////////////////////
+Sprite::Sprite(std::shared_ptr<const Texture> texture, const IntRect& rectangle)
+{
+    // Compute the texture area
+    setTextureRect(rectangle);
+    // Assign texture
+    setTexture(std::move(texture), false);
 }
 
 
@@ -63,6 +80,22 @@ void Sprite::setTexture(const Texture& texture, bool resetRect)
 
     // Assign the new texture
     m_texture = &texture;
+}
+
+
+////////////////////////////////////////////////////////////
+void Sprite::setTexture(std::shared_ptr<const Texture> texture, bool resetRect)
+{
+    assert(texture && "Sprite::setTexture() Texture cannot be null");
+
+    // Recompute the texture area if requested
+    if (resetRect)
+    {
+        setTextureRect(IntRect({0, 0}, Vector2i(texture->getSize())));
+    }
+
+    // Assign the new texture
+    m_texture = std::move(texture);
 }
 
 
@@ -92,7 +125,18 @@ void Sprite::setColor(const Color& color)
 ////////////////////////////////////////////////////////////
 const Texture& Sprite::getTexture() const
 {
-    return *m_texture;
+    static const struct Visitor
+    {
+        const sf::Texture* operator()(const sf::Texture* texture) const
+        {
+            return texture;
+        }
+        const sf::Texture* operator()(const std::shared_ptr<const sf::Texture>& texture) const
+        {
+            return texture.get();
+        }
+    } visitor;
+    return *std::visit(visitor, m_texture);
 }
 
 
@@ -133,7 +177,7 @@ void Sprite::draw(RenderTarget& target, const RenderStates& states) const
     RenderStates statesCopy(states);
 
     statesCopy.transform *= getTransform();
-    statesCopy.texture = m_texture;
+    statesCopy.texture = &getTexture();
     target.draw(m_vertices, 4, PrimitiveType::TriangleStrip, statesCopy);
 }
 
