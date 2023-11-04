@@ -66,13 +66,13 @@ int main()
         for (sf::Event event; window.pollEvent(event);)
         {
             // Close window: exit
-            if (event.type == sf::Event::Closed)
+            if (event.is<sf::Event::Closed>())
             {
                 window.close();
             }
 
             // Escape pressed: exit
-            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+            if (event.is<sf::Event::KeyPressed>() && event.get<sf::Event::KeyPressed>().code == sf::Keyboard::Escape)
             {
                 window.close();
             }

@@ -19,6 +19,7 @@ set(SRC
     ${INCROOT}/GlResource.hpp
     ${INCROOT}/ContextSettings.hpp
     ${INCROOT}/Event.hpp
+    ${SRCROOT}/Event.cpp
     ${SRCROOT}/InputImpl.hpp
     ${INCROOT}/Joystick.hpp
     ${SRCROOT}/Joystick.cpp

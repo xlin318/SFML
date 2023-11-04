@@ -234,8 +234,10 @@ void WindowImpl::processJoystickEvents()
         if (previousState.connected ^ connected)
         {
             Event event;
-            event.type                      = connected ? Event::JoystickConnected : Event::JoystickDisconnected;
-            event.joystickButton.joystickId = i;
+            if (connected)
+                event = Event::JoystickConnected{i};
+            else
+                event = Event::JoystickDisconnected{i};
             pushEvent(event);
 
             // Clear previous axes positions
@@ -257,13 +259,7 @@ void WindowImpl::processJoystickEvents()
                     const float currPos = m_joystickStatesImpl->states[i].axes[axis];
                     if (std::abs(currPos - prevPos) >= m_joystickThreshold)
                     {
-                        Event event;
-                        event.type                    = Event::JoystickMoved;
-                        event.joystickMove.joystickId = i;
-                        event.joystickMove.axis       = axis;
-                        event.joystickMove.position   = currPos;
-                        pushEvent(event);
-
+                        pushEvent(Event::JoystickMoved{i, axis, currPos});
                         m_previousAxes[i][axis] = currPos;
                     }
                 }
@@ -278,9 +274,10 @@ void WindowImpl::processJoystickEvents()
                 if (prevPressed ^ currPressed)
                 {
                     Event event;
-                    event.type = currPressed ? Event::JoystickButtonPressed : Event::JoystickButtonReleased;
-                    event.joystickButton.joystickId = i;
-                    event.joystickButton.button     = j;
+                    if (currPressed)
+                        event = Event::JoystickButtonPressed{i, j};
+                    else
+                        event = Event::JoystickButtonReleased{i, j};
                     pushEvent(event);
                 }
             }
@@ -308,15 +305,7 @@ void WindowImpl::processSensorEvents()
 
             // If the value has changed, trigger an event
             if (m_sensorValue[i] != previousValue) // @todo use a threshold?
-            {
-                Event event;
-                event.type        = Event::SensorChanged;
-                event.sensor.type = sensor;
-                event.sensor.x    = m_sensorValue[i].x;
-                event.sensor.y    = m_sensorValue[i].y;
-                event.sensor.z    = m_sensorValue[i].z;
-                pushEvent(event);
-            }
+                pushEvent(Event::SensorChanged{sensor, m_sensorValue[i]});
         }
     }
 }

@@ -207,21 +207,21 @@ int main()
             for (sf::Event event; window.pollEvent(event);)
             {
                 // Close window: exit
-                if (event.type == sf::Event::Closed)
+                if (event.is<sf::Event::Closed>())
                 {
                     exit = true;
                     window.close();
                 }
 
                 // Escape key: exit
-                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
+                if (event.is<sf::Event::KeyPressed>() && event.get<sf::Event::KeyPressed>().code == sf::Keyboard::Escape)
                 {
                     exit = true;
                     window.close();
                 }
 
                 // Return key: toggle mipmapping
-                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Enter))
+                if (event.is<sf::Event::KeyPressed>() && event.get<sf::Event::KeyPressed>().code == sf::Keyboard::Enter)
                 {
                     if (mipmapEnabled)
                     {
@@ -238,14 +238,14 @@ int main()
                 }
 
                 // Space key: toggle sRGB conversion
-                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space))
+                if (event.is<sf::Event::KeyPressed>() && event.get<sf::Event::KeyPressed>().code == sf::Keyboard::Space)
                 {
                     sRgb = !sRgb;
                     window.close();
                 }
 
                 // Adjust the viewport when the window is resized
-                if (event.type == sf::Event::Resized)
+                if (const auto* resized = event.getIf<sf::Event::Resized>())
                 {
                     const sf::Vector2u textureSize = backgroundTexture.getSize();
 
@@ -256,10 +256,11 @@ int main()
                         return EXIT_FAILURE;
                     }
 
-                    glViewport(0, 0, static_cast<GLsizei>(event.size.width), static_cast<GLsizei>(event.size.height));
+                    const auto [width, height] = resized->size;
+                    glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
                     glMatrixMode(GL_PROJECTION);
                     glLoadIdentity();
-                    const GLfloat newRatio = static_cast<float>(event.size.width) / static_cast<float>(event.size.height);
+                    const GLfloat newRatio = static_cast<float>(width) / static_cast<float>(height);
 #ifdef SFML_OPENGL_ES
                     glFrustumf(-newRatio, newRatio, -1.f, 1.f, 1.f, 500.f);
 #else

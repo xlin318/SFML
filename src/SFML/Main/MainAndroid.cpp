@@ -268,10 +268,7 @@ static void onResume(ANativeActivity* activity)
         goToFullscreenMode(activity);
 
     // Send an event to warn people the activity has been resumed
-    sf::Event event;
-    event.type = sf::Event::MouseEntered;
-
-    states->forwardEvent(event);
+    states->forwardEvent(sf::Event::MouseEntered{});
 }
 
 
@@ -283,10 +280,7 @@ static void onPause(ANativeActivity* activity)
     std::lock_guard           lock(states->mutex);
 
     // Send an event to warn people the activity has been paused
-    sf::Event event;
-    event.type = sf::Event::MouseLeft;
-
-    states->forwardEvent(event);
+    states->forwardEvent(sf::Event::MouseLeft{});
 }
 
 
@@ -309,12 +303,7 @@ static void onDestroy(ANativeActivity* activity)
         // If the main thread hasn't yet finished, send the event and wait for
         // it to finish.
         if (!states->mainOver)
-        {
-            sf::Event event;
-            event.type = sf::Event::Closed;
-
-            states->forwardEvent(event);
-        }
+            states->forwardEvent(sf::Event::Closed{});
     }
 
     // Wait for the main thread to be terminated
@@ -352,9 +341,7 @@ static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* wind
     states->window = window;
 
     // Notify SFML mechanism
-    sf::Event event;
-    event.type = sf::Event::GainedFocus;
-    states->forwardEvent(event);
+    states->forwardEvent(sf::Event::GainedFocus{});
 
     // Wait for the event to be taken into account by SFML
     states->updated = false;
@@ -377,9 +364,7 @@ static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* /*
     states->window = nullptr;
 
     // Notify SFML mechanism
-    sf::Event event;
-    event.type = sf::Event::LostFocus;
-    states->forwardEvent(event);
+    states->forwardEvent(sf::Event::LostFocus{});
 
     // Wait for the event to be taken into account by SFML
     states->updated = false;
@@ -455,11 +440,8 @@ static void onContentRectChanged(ANativeActivity* activity, const ARect* /* rect
     if (states->window != nullptr)
     {
         // Send an event to warn people about the window move/resize
-        sf::Event event;
-        event.type        = sf::Event::Resized;
-        event.size.width  = static_cast<unsigned int>(ANativeWindow_getWidth(states->window));
-        event.size.height = static_cast<unsigned int>(ANativeWindow_getHeight(states->window));
-
+        const sf::Event::Resized event{
+            sf::Vector2u(sf::Vector2(ANativeWindow_getWidth(states->window), ANativeWindow_getHeight(states->window)))};
         states->forwardEvent(event);
     }
 }

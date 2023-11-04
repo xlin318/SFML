@@ -108,7 +108,7 @@ public:
     /// \param size new width and height
     ///
     ////////////////////////////////////////////////////////////
-    void windowResized(const Vector2u& size);
+    void windowResized(Vector2u size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Window Lost Focus Event - called by the cocoa window object
@@ -195,20 +195,20 @@ public:
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param key active key
+    /// \param event active key
     ///
     ////////////////////////////////////////////////////////////
-    void keyDown(Event::KeyEvent key);
+    void keyDown(Event::KeyPressed event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Key Up Event - called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param key active key
+    /// \param event active key
     ///
     ////////////////////////////////////////////////////////////
-    void keyUp(Event::KeyEvent key);
+    void keyUp(Event::KeyReleased event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Text Entred Event - called by the cocoa view object
