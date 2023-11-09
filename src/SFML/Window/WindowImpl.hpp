@@ -125,7 +125,7 @@ public:
     /// \param block Use true to block the thread until an event arrives
     ///
     ////////////////////////////////////////////////////////////
-    bool popEvent(Event& event, bool block);
+    std::optional<Event> popEvent(bool block);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
