@@ -441,8 +441,10 @@ const T* Event::getIf() const
 /// statement to process events.
 ///
 /// \code
-/// for (sf::Event event; window.pollEvent(event);)
+/// while (const auto maybeEvent = window.pollEvent())
 /// {
+///     const auto& event = *maybeEvent;
+///
 ///     switch (event.getType())
 ///     {
 ///         // Request for closing the window
@@ -475,8 +477,10 @@ const T* Event::getIf() const
 /// process events in a series of if/else if blocks.
 ///
 /// \code
-/// for (sf::Event event; window.pollEvent(event);)
+/// while (const auto maybeEvent = window.pollEvent())
 /// {
+///     const auto& event = *maybeEvent;
+///
 ///     // Request for closing the window
 ///     if (event.is<sf::Event::Closed>())
 ///         window.close();

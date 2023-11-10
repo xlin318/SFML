@@ -157,36 +157,30 @@ bool WindowBase::isOpen() const
 
 
 ////////////////////////////////////////////////////////////
-bool WindowBase::pollEvent(Event& event)
+std::optional<Event> WindowBase::pollEvent()
 {
     if (!m_impl)
-        return false;
+        return std::nullopt;
 
-    if (const auto maybeEvent = m_impl->popEvent(false))
-    {
-        filterEvent(*maybeEvent);
-        event = *maybeEvent;
-        return true;
-    }
+    const auto event = m_impl->popEvent(false);
+    if (event)
+        filterEvent(*event);
 
-    return false;
+    return event;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool WindowBase::waitEvent(Event& event)
+std::optional<Event> WindowBase::waitEvent()
 {
     if (!m_impl)
-        return false;
+        return std::nullopt;
 
-    if (const auto maybeEvent = m_impl->popEvent(true))
-    {
-        filterEvent(*maybeEvent);
-        event = *maybeEvent;
-        return true;
-    }
+    const auto event = m_impl->popEvent(true);
+    if (event)
+        filterEvent(*event);
 
-    return false;
+    return event;
 }
 
 

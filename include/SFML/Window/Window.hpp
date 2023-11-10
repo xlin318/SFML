@@ -321,8 +321,10 @@ private:
 /// while (window.isOpen())
 /// {
 ///    // Event processing
-///    for (sf::Event event; window.pollEvent(event);)
+///    while (const auto maybeEvent = window.pollEvent())
 ///    {
+///        const auto& event = *maybeEvent;
+///
 ///        // Request for closing the window
 ///        if (event.is<sf::Event::Closed>())
 ///            window.close();

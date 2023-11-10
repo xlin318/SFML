@@ -91,8 +91,10 @@ SFML_WINDOW_API void setString(const String& text);
 /// sf::String string = sf::Clipboard::getString();
 ///
 /// // or use it in the event loop
-/// for (sf::Event event; window.pollEvent(event);)
+/// while (const auto maybeEvent = window.pollEvent())
 /// {
+///     const auto& event = *maybeEvent;
+///
 ///     if(event.is<sf::Event::Closed>())
 ///         window.close();
 ///     if(event.is<sf::Event::KeyPressed>())

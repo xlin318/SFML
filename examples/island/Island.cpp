@@ -179,8 +179,10 @@ int main()
     while (window.isOpen())
     {
         // Handle events
-        for (sf::Event event; window.pollEvent(event);)
+        while (const auto maybeEvent = window.pollEvent())
         {
+            const auto& event = *maybeEvent;
+
             // Window closed or escape key pressed: exit
             if (event.is<sf::Event::Closed>() ||
                 (event.is<sf::Event::KeyPressed>() && event.get<sf::Event::KeyPressed>().code == sf::Keyboard::Escape))

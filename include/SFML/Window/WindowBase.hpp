@@ -167,7 +167,7 @@ public:
     /// thus you should always call this function in a loop
     /// to make sure that you process every pending event.
     /// \code
-    /// for (sf::Event event; window.pollEvent(event);)
+    /// while (const auto maybeEvent = window.pollEvent())
     /// {
     ///    // process event...
     /// }
@@ -180,7 +180,7 @@ public:
     /// \see waitEvent
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool pollEvent(Event& event);
+    [[nodiscard]] std::optional<Event> pollEvent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Wait for an event and return it
@@ -193,8 +193,7 @@ public:
     /// is dedicated to events handling: you want to make this thread
     /// sleep as long as no new event is received.
     /// \code
-    /// sf::Event event;
-    /// if (window.waitEvent(event))
+    /// if (window.waitEvent())
     /// {
     ///    // process event...
     /// }
@@ -207,7 +206,7 @@ public:
     /// \see pollEvent
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool waitEvent(Event& event);
+    [[nodiscard]] std::optional<Event> waitEvent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
@@ -532,8 +531,10 @@ private:
 /// while (window.isOpen())
 /// {
 ///    // Event processing
-///    for (sf::Event event; window.pollEvent(event);)
+///    while (const auto maybeEvent = window.pollEvent())
 ///    {
+///        const auto& event = *maybeEvent;
+///
 ///        // Request for closing the window
 ///        if (event.is<sf::Event::Closed>())
 ///            window.close();

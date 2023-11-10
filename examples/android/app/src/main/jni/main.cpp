@@ -113,8 +113,10 @@ int main(int argc, char* argv[])
 
     while (window.isOpen())
     {
-        for (sf::Event event; active ? window.pollEvent(event) : window.waitEvent(event);)
+        while (const auto maybeEvent = active ? window.pollEvent() : window.waitEvent())
         {
+            const auto& event = *maybeEvent;
+
             switch (event.getType())
             {
                 case sf::Event::Type::Closed:

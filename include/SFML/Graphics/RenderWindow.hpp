@@ -214,9 +214,11 @@ private:
 /// // The main loop - ends as soon as the window is closed
 /// while (window.isOpen())
 /// {
-///    // Event processing
-///    for (sf::Event event; window.pollEvent(event);)
-///    {
+///     // Event processing
+///     while (const auto maybeEvent = window.pollEvent())
+///     {
+///        const auto& event = *maybeEvent;
+///
 ///        // Request for closing the window
 ///        if (event.is<sf::Event::Closed>())
 ///            window.close();
