@@ -174,6 +174,7 @@ if(SFML_ENABLE_COVERAGE AND SFML_OS_WINDOWS AND NOT SFML_COMPILER_GCC)
     )
 endif()
 
+set(COVERAGE_PREFIX "")
 if(SFML_ENABLE_COVERAGE AND OpenCppCoverage_FOUND)
     # Use OpenCppCoverage
     message(STATUS "Using OpenCppCoverage to generate coverage report")
