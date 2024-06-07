@@ -14,9 +14,8 @@
             }
         },
         {
-            "name": "dev",
-            "displayName": "Development (used by CI/CD)",
-            "hidden": true,
+            "name": "ci-cd",
+            "displayName": "CI/CD Preset",
             "binaryDir": "build",
             "installDir": "${sourceDir}/build/install",
             "inherits": "generic"
