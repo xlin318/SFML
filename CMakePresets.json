@@ -1,17 +1,109 @@
 {
   "version": 3,
-  "configurePresets":[
-    {
-      "name": "dev",
-      "binaryDir": "build",
-      "installDir": "${sourceDir}/build/install",
-      "cacheVariables": {
-        "CMAKE_CXX_EXTENSIONS": "OFF",
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "SFML_BUILD_EXAMPLES": "ON",
-        "SFML_BUILD_TEST_SUITE": "ON",
-        "SFML_WARNINGS_AS_ERRORS": "ON"
-      }
-    }
-  ]
+    "configurePresets": [
+        {
+            "name": "generic",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_CXX_EXTENSIONS": "OFF",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "SFML_BUILD_EXAMPLES": "ON",
+                "SFML_BUILD_TEST_SUITE": "ON",
+                "SFML_WARNINGS_AS_ERRORS": "ON",
+                "SFML_GENERATE_PDB": "ON"
+            }
+        },
+        {
+            "name": "dev",
+            "displayName": "Development (used by CI/CD)",
+            "hidden": true,
+            "binaryDir": "build",
+            "installDir": "${sourceDir}/build/install",
+            "inherits": "generic"
+        },
+        {
+            "name": "x64-debug",
+            "displayName": "x64: Debug",
+            "inherits": "generic",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "installDir": "${sourceDir}/install/${presetName}",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "x64-release",
+            "displayName": "x64: Release",
+            "inherits": "x64-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "x64-relwithdebinfo",
+            "displayName": "x64: RelWithDebInfo",
+            "inherits": "x64-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+            }
+        },
+        {
+            "name": "x86-debug",
+            "displayName": "x86: Debug",
+            "inherits": "x64-debug",
+            "architecture": {
+                "value": "x86",
+                "strategy": "external"
+            }
+        },
+        {
+            "name": "x86-release",
+            "displayName": "x86: Release",
+            "inherits": "x64-release",
+            "architecture": {
+                "value": "x86",
+                "strategy": "external"
+            }
+        },
+        {
+            "name": "x86-relwithdebinfo",
+            "displayName": "x86: RelWithDebInfo",
+            "inherits": "x64-relwithdebinfo",
+            "architecture": {
+                "value": "x86",
+                "strategy": "external"
+            }
+        }/*,
+        {
+            "name": "arm-debug",
+            "displayName": "ARM: Debug",
+            "inherits": "x64-debug",
+            "architecture": {
+                "value": "arm",
+                "strategy": "external"
+            }
+        },
+        {
+            "name": "arm-release",
+            "displayName": "ARM: Release",
+            "inherits": "x64-release",
+            "architecture": {
+                "value": "arm",
+                "strategy": "external"
+            }
+        },
+        {
+            "name": "arm-relwithdebinfo",
+            "displayName": "ARM: RelWithDebInfo",
+            "inherits": "x64-relwithdebinfo",
+            "architecture": {
+                "value": "arm",
+                "strategy": "external"
+            }
+        }*/
+    ]
 }
