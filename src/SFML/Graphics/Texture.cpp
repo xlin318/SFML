@@ -412,10 +412,10 @@ Image Texture::copyToImage() const
         if (m_pixelsFlipped)
         {
             // Flip the texture vertically
-            const auto stride             = static_cast<std::ptrdiff_t>(m_size.x * 4);
+            const auto stride             = static_cast<std::ptrdiff_t>(m_size.x) * 4;
             auto       currentRowIterator = pixels.begin();
             auto       nextRowIterator    = pixels.begin() + stride;
-            auto       reverseRowIterator = pixels.begin() + (stride * static_cast<std::ptrdiff_t>(m_size.y - 1));
+            auto       reverseRowIterator = pixels.begin() + (stride * (static_cast<std::ptrdiff_t>(m_size.y) - 1));
             for (unsigned int i = 0; i < m_size.y / 2; ++i)
             {
                 std::swap_ranges(currentRowIterator, nextRowIterator, reverseRowIterator);

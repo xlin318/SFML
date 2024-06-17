@@ -541,7 +541,7 @@ void Image::flipVertically()
 {
     if (!m_pixels.empty())
     {
-        const auto rowSize = static_cast<std::vector<std::uint8_t>::iterator::difference_type>(m_size.x * 4);
+        const auto rowSize = static_cast<std::vector<std::uint8_t>::iterator::difference_type>(m_size.x) * 4;
 
         auto top    = m_pixels.begin();
         auto bottom = m_pixels.end() - rowSize;

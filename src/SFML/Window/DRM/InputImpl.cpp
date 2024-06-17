@@ -317,7 +317,7 @@ void pushEvent(const sf::Event& event)
 TouchSlot& atSlot(int idx)
 {
     if (idx >= static_cast<int>(touchSlots.size()))
-        touchSlots.resize(static_cast<std::size_t>(idx + 1));
+        touchSlots.resize(static_cast<std::size_t>(idx) + 1);
     return touchSlots.at(static_cast<std::size_t>(idx));
 }
 
