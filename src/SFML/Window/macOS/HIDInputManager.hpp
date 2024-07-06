@@ -30,6 +30,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/macOS/Utils.hpp>
 
 #include <IOKit/hid/IOHIDDevice.h>
 #include <IOKit/hid/IOHIDManager.h>
@@ -243,10 +244,10 @@ private:
     ///
     /// \param page  HID page like kHIDPage_GenericDesktop
     /// \param usage HID usage page like kHIDUsage_GD_Keyboard or kHIDUsage_GD_Mouse
-    /// \return a retained, non-empty CFSetRef of IOHIDDeviceRef or a null pointer
+    /// \return a retained, non-empty __CFSet pointer of IOHIDDeviceRef or a null pointer
     ///
     ////////////////////////////////////////////////////////////
-    CFSetRef copyDevices(std::uint32_t page, std::uint32_t usage);
+    CFPtr<const __CFSet> copyDevices(std::uint32_t page, std::uint32_t usage);
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a key is pressed
@@ -286,8 +287,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    IOHIDManagerRef m_manager{};         ///< Underlying HID Manager
-    bool            m_keysInitialized{}; ///< Has initializeKeyboard been called at least once?
+    CFPtr<__IOHIDManager> m_manager{};         ///< Underlying HID Manager
+    bool                  m_keysInitialized{}; ///< Has initializeKeyboard been called at least once?
     EnumArray<Keyboard::Scancode, IOHIDElements, Keyboard::ScancodeCount> m_keys; ///< All the keys on any connected keyboard
     EnumArray<Keyboard::Key, Keyboard::Scancode, Keyboard::KeyCount> m_keyToScancodeMapping{}; ///< Mapping from Key to Scancode
     EnumArray<Keyboard::Scancode, Keyboard::Key, Keyboard::ScancodeCount> m_scancodeToKeyMapping{}; ///< Mapping from Scancode to Key

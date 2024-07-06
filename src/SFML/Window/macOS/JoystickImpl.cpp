@@ -132,15 +132,15 @@ bool JoystickImpl::isConnected(unsigned int index)
         if (connectedCount > openedCount)
         {
             // Get all devices
-            CFSetRef devices = HIDJoystickManager::getInstance().copyJoysticks();
+            const auto devices = CFPtr<const __CFSet>(HIDJoystickManager::getInstance().copyJoysticks());
 
             if (devices != nullptr)
             {
-                const CFIndex size = CFSetGetCount(devices);
+                const CFIndex size = CFSetGetCount(devices.get());
                 if (size > 0)
                 {
                     std::vector<CFTypeRef> array(static_cast<std::size_t>(size)); // array of IOHIDDeviceRef
-                    CFSetGetValues(devices, array.data());
+                    CFSetGetValues(devices.get(), array.data());
 
                     // If there exists a device d s.t. there is no j s.t.
                     // m_locationIDs[j] == d's location then we have a new device.
@@ -166,8 +166,6 @@ bool JoystickImpl::isConnected(unsigned int index)
                         }
                     }
                 }
-
-                CFRelease(devices);
             }
         }
     }
@@ -185,14 +183,14 @@ bool JoystickImpl::open(unsigned int index)
     const Location deviceLoc = m_locationIDs[index]; // The device we need to load
 
     // Get all devices
-    CFSetRef devices = HIDJoystickManager::getInstance().copyJoysticks();
+    const auto devices = HIDJoystickManager::getInstance().copyJoysticks();
     if (devices == nullptr)
         return false;
 
     // Get a usable copy of the joysticks devices.
-    const CFIndex          joysticksCount = CFSetGetCount(devices);
+    const CFIndex          joysticksCount = CFSetGetCount(devices.get());
     std::vector<CFTypeRef> devicesArray(static_cast<std::size_t>(joysticksCount));
-    CFSetGetValues(devices, devicesArray.data());
+    CFSetGetValues(devices.get(), devicesArray.data());
 
     // Get the desired joystick.
     IOHIDDeviceRef self = nil;
@@ -204,29 +202,23 @@ bool JoystickImpl::open(unsigned int index)
     }
 
     if (self == nil)
-    {
-        CFRelease(devices);
         return false;
-    }
 
     m_identification.name      = getDeviceString(self, CFSTR(kIOHIDProductKey), m_index);
     m_identification.vendorId  = getDeviceUint(self, CFSTR(kIOHIDVendorIDKey), m_index);
     m_identification.productId = getDeviceUint(self, CFSTR(kIOHIDProductIDKey), m_index);
 
     // Get a list of all elements attached to the device.
-    CFArrayRef elements = IOHIDDeviceCopyMatchingElements(self, nullptr, kIOHIDOptionsTypeNone);
+    const auto elements = CFPtr<const __CFArray>(IOHIDDeviceCopyMatchingElements(self, nullptr, kIOHIDOptionsTypeNone));
 
     if (elements == nullptr)
-    {
-        CFRelease(devices);
         return false;
-    }
 
     // Go through all connected elements.
-    const CFIndex elementsCount = CFArrayGetCount(elements);
+    const CFIndex elementsCount = CFArrayGetCount(elements.get());
     for (int i = 0; i < elementsCount; ++i)
     {
-        auto* element = static_cast<IOHIDElementRef>(const_cast<void*>(CFArrayGetValueAtIndex(elements, i)));
+        auto* element = static_cast<IOHIDElementRef>(const_cast<void*>(CFArrayGetValueAtIndex(elements.get(), i)));
         switch (IOHIDElementGetUsagePage(element))
         {
             case kHIDPage_GenericDesktop:
@@ -331,9 +323,6 @@ bool JoystickImpl::open(unsigned int index)
     // Axis X (for example) and we want to keep only the last one. To prevent
     // leaking we retain objects 'only' now.
 
-    CFRelease(devices);
-    CFRelease(elements);
-
     return true;
 }
 
@@ -406,14 +395,14 @@ JoystickState JoystickImpl::update()
     const Location selfLoc = m_locationIDs[m_index];
 
     // Get all devices
-    CFSetRef devices = HIDJoystickManager::getInstance().copyJoysticks();
+    auto devices = HIDJoystickManager::getInstance().copyJoysticks();
     if (devices == nullptr)
         return disconnectedState;
 
     // Get a usable copy of the joysticks devices.
-    const CFIndex          joysticksCount = CFSetGetCount(devices);
+    const CFIndex          joysticksCount = CFSetGetCount(devices.get());
     std::vector<CFTypeRef> devicesArray(static_cast<std::size_t>(joysticksCount));
-    CFSetGetValues(devices, devicesArray.data());
+    CFSetGetValues(devices.get(), devicesArray.data());
 
     // Search for it
     bool found = false;
@@ -423,9 +412,6 @@ JoystickState JoystickImpl::update()
         if (selfLoc == HIDInputManager::getLocationID(d))
             found = true;
     }
-
-    // Release unused stuff
-    CFRelease(devices);
 
     // If not found we consider it disconnected
     if (!found)
