@@ -78,11 +78,11 @@ CFDictionaryRef HIDInputManager::copyDevicesMask(std::uint32_t page, std::uint32
                                                             &kCFTypeDictionaryValueCallBacks);
 
     // Add the page value.
-    auto value = CFPtr<const __CFNumber>(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &page));
+    auto value = CFPtr<CFNumberRef>(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &page));
     CFDictionarySetValue(dict, CFSTR(kIOHIDDeviceUsagePageKey), value.get());
 
     // Add the usage value (which is only valid if page value exists).
-    value = CFPtr<const __CFNumber>(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &usage));
+    value = CFPtr<CFNumberRef>(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &usage));
     CFDictionarySetValue(dict, CFSTR(kIOHIDDeviceUsageKey), value.get());
 
     return dict;
@@ -710,7 +710,7 @@ String HIDInputManager::getDescription(Keyboard::Scancode code)
 HIDInputManager::HIDInputManager()
 {
     // Create an HID Manager reference
-    m_manager                 = CFPtr<__IOHIDManager>(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone));
+    m_manager                 = CFPtr<IOHIDManagerRef>(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone));
     const IOReturn openStatus = IOHIDManagerOpen(m_manager.get(), kIOHIDOptionsTypeNone);
 
     if (openStatus != kIOReturnSuccess)
@@ -770,8 +770,7 @@ void HIDInputManager::initializeKeyboard()
 ////////////////////////////////////////////////////////////
 void HIDInputManager::loadKeyboard(IOHIDDeviceRef keyboard)
 {
-    const auto underlying = CFPtr<const __CFArray>(
-        IOHIDDeviceCopyMatchingElements(keyboard, nullptr, kIOHIDOptionsTypeNone));
+    const auto underlying = CFPtr<CFArrayRef>(IOHIDDeviceCopyMatchingElements(keyboard, nullptr, kIOHIDOptionsTypeNone));
     if ((underlying == nullptr) || (CFArrayGetCount(underlying.get()) == 0))
     {
         err() << "Detected a keyboard without any keys." << std::endl;
@@ -809,7 +808,7 @@ void HIDInputManager::buildMappings()
     m_scancodeToKeyMapping.fill(Keyboard::Key::Unknown);
 
     // Get the current keyboard layout
-    const auto tis         = CFPtr<__TISInputSource>(TISCopyCurrentKeyboardLayoutInputSource());
+    const auto tis         = CFPtr<TISInputSourceRef>(TISCopyCurrentKeyboardLayoutInputSource());
     const auto* layoutData = static_cast<CFDataRef>(TISGetInputSourceProperty(tis.get(), kTISPropertyUnicodeKeyLayoutData));
 
     if (layoutData == nullptr)
@@ -927,14 +926,14 @@ void HIDInputManager::freeUp()
 
 
 ////////////////////////////////////////////////////////////
-CFPtr<const __CFSet> HIDInputManager::copyDevices(std::uint32_t page, std::uint32_t usage)
+CFPtr<CFSetRef> HIDInputManager::copyDevices(std::uint32_t page, std::uint32_t usage)
 {
     // Filter and keep only the requested devices
-    const auto mask = CFPtr<const __CFDictionary>(copyDevicesMask(page, usage));
+    const auto mask = CFPtr<CFDictionaryRef>(copyDevicesMask(page, usage));
 
     IOHIDManagerSetDeviceMatching(m_manager.get(), mask.get());
 
-    auto devices = CFPtr<const __CFSet>(IOHIDManagerCopyDevices(m_manager.get()));
+    auto devices = CFPtr<CFSetRef>(IOHIDManagerCopyDevices(m_manager.get()));
     if (devices == nullptr)
         return nullptr;
 

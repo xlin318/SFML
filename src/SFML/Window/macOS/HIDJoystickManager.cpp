@@ -61,9 +61,9 @@ unsigned int HIDJoystickManager::getJoystickCount()
 
 
 ////////////////////////////////////////////////////////////
-CFPtr<const __CFSet> HIDJoystickManager::copyJoysticks()
+CFPtr<CFSetRef> HIDJoystickManager::copyJoysticks()
 {
-    return CFPtr<const __CFSet>(IOHIDManagerCopyDevices(m_manager));
+    return CFPtr<CFSetRef>(IOHIDManagerCopyDevices(m_manager));
 }
 
 
@@ -72,14 +72,14 @@ HIDJoystickManager::HIDJoystickManager()
 {
     m_manager = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
 
-    const auto mask0 = CFPtr<const __CFDictionary>(
+    const auto mask0 = CFPtr<CFDictionaryRef>(
         HIDInputManager::copyDevicesMask(kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick));
 
-    const auto mask1 = CFPtr<const __CFDictionary>(
+    const auto mask1 = CFPtr<CFDictionaryRef>(
         HIDInputManager::copyDevicesMask(kHIDPage_GenericDesktop, kHIDUsage_GD_GamePad));
 
     std::array maskArray = {mask0.get(), mask1.get()};
-    const auto mask      = CFPtr<const __CFArray>(
+    const auto mask      = CFPtr<CFArrayRef>(
         CFArrayCreate(nullptr, reinterpret_cast<const void**>(maskArray.data()), maskArray.size(), nullptr));
 
     IOHIDManagerSetDeviceMatchingMultiple(m_manager, mask.get());

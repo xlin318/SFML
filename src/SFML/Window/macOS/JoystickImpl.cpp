@@ -132,7 +132,7 @@ bool JoystickImpl::isConnected(unsigned int index)
         if (connectedCount > openedCount)
         {
             // Get all devices
-            const auto devices = CFPtr<const __CFSet>(HIDJoystickManager::getInstance().copyJoysticks());
+            const auto devices = CFPtr<CFSetRef>(HIDJoystickManager::getInstance().copyJoysticks());
 
             if (devices != nullptr)
             {
@@ -209,7 +209,7 @@ bool JoystickImpl::open(unsigned int index)
     m_identification.productId = getDeviceUint(self, CFSTR(kIOHIDProductIDKey), m_index);
 
     // Get a list of all elements attached to the device.
-    const auto elements = CFPtr<const __CFArray>(IOHIDDeviceCopyMatchingElements(self, nullptr, kIOHIDOptionsTypeNone));
+    const auto elements = CFPtr<CFArrayRef>(IOHIDDeviceCopyMatchingElements(self, nullptr, kIOHIDOptionsTypeNone));
 
     if (elements == nullptr)
         return false;
@@ -218,7 +218,7 @@ bool JoystickImpl::open(unsigned int index)
     const CFIndex elementsCount = CFArrayGetCount(elements.get());
     for (int i = 0; i < elementsCount; ++i)
     {
-        auto element = std::shared_ptr(CFPtr<__IOHIDElement>(
+        auto element = std::shared_ptr(CFPtr<IOHIDElementRef>(
             static_cast<IOHIDElementRef>(const_cast<void*>(CFArrayGetValueAtIndex(elements.get(), i)))));
         switch (IOHIDElementGetUsagePage(element.get()))
         {

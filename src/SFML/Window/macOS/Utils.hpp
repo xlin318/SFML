@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <memory>
+#include <type_traits>
 
 
 namespace sf::priv
@@ -50,5 +51,5 @@ struct CFDeleter
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-using CFPtr = std::unique_ptr<T, CFDeleter>;
+using CFPtr = std::unique_ptr<std::remove_pointer_t<T>, CFDeleter>;
 } // namespace sf::priv

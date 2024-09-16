@@ -39,7 +39,7 @@ namespace sf::priv
 unsigned int modeBitsPerPixel(CGDisplayModeRef mode)
 {
     // Compare encoding.
-    const auto pixEnc = CFPtr<const __CFString>(CGDisplayModeCopyPixelEncoding(mode));
+    const auto pixEnc = CFPtr<CFStringRef>(CGDisplayModeCopyPixelEncoding(mode));
     if (CFStringCompare(pixEnc.get(), CFSTR(IO32BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
         return 32;
     if (CFStringCompare(pixEnc.get(), CFSTR(IO16BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)

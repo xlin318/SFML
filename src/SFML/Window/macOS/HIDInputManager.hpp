@@ -41,7 +41,7 @@
 namespace sf::priv
 {
 
-using IOHIDElements = std::vector<CFPtr<__IOHIDElement>>;
+using IOHIDElements = std::vector<CFPtr<IOHIDElementRef>>;
 
 ////////////////////////////////////////////////////////////
 /// \brief sf::priv::InputImpl helper
@@ -247,7 +247,7 @@ private:
     /// \return a retained, non-empty __CFSet pointer of IOHIDDeviceRef or a null pointer
     ///
     ////////////////////////////////////////////////////////////
-    CFPtr<const __CFSet> copyDevices(std::uint32_t page, std::uint32_t usage);
+    CFPtr<CFSetRef> copyDevices(std::uint32_t page, std::uint32_t usage);
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a key is pressed
@@ -287,8 +287,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    CFPtr<__IOHIDManager> m_manager{};         ///< Underlying HID Manager
-    bool                  m_keysInitialized{}; ///< Has initializeKeyboard been called at least once?
+    CFPtr<IOHIDManagerRef> m_manager;           ///< Underlying HID Manager
+    bool                   m_keysInitialized{}; ///< Has initializeKeyboard been called at least once?
     EnumArray<Keyboard::Scancode, IOHIDElements, Keyboard::ScancodeCount> m_keys; ///< All the keys on any connected keyboard
     EnumArray<Keyboard::Key, Keyboard::Scancode, Keyboard::KeyCount> m_keyToScancodeMapping{}; ///< Mapping from Key to Scancode
     EnumArray<Keyboard::Scancode, Keyboard::Key, Keyboard::ScancodeCount> m_scancodeToKeyMapping{}; ///< Mapping from Scancode to Key

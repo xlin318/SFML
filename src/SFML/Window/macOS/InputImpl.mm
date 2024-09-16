@@ -212,7 +212,7 @@ void setMousePosition(Vector2i position)
     const CGPoint pos   = CGPointMake(position.x / scale, position.y / scale);
 
     // Place the cursor.
-    const auto event = CFPtr<__CGEvent>(
+    const auto event = CFPtr<CGEventRef>(
         CGEventCreateMouseEvent(nullptr,
                                 kCGEventMouseMoved,
                                 pos,

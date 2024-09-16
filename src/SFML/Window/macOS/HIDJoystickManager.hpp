@@ -78,7 +78,7 @@ public:
     /// \return a retained __CFSet pointer of IOHIDDeviceRef or a null pointer
     ///
     ////////////////////////////////////////////////////////////
-    CFPtr<const __CFSet> copyJoysticks();
+    CFPtr<CFSetRef> copyJoysticks();
 
 private:
     ////////////////////////////////////////////////////////////
