@@ -94,7 +94,7 @@ public:
     /// \return a retained CFDictionaryRef
     ///
     ////////////////////////////////////////////////////////////
-    static CFDictionaryRef copyDevicesMask(std::uint32_t page, std::uint32_t usage);
+    static CFPtr<CFDictionaryRef> copyDevicesMask(std::uint32_t page, std::uint32_t usage);
 
     ////////////////////////////////////////////////////////////
     /// \brief Try to convert a character into a SFML key code

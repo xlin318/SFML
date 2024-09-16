@@ -69,21 +69,19 @@ long HIDInputManager::getLocationID(IOHIDDeviceRef device)
 
 
 ////////////////////////////////////////////////////////////
-CFDictionaryRef HIDInputManager::copyDevicesMask(std::uint32_t page, std::uint32_t usage)
+CFPtr<CFDictionaryRef> HIDInputManager::copyDevicesMask(std::uint32_t page, std::uint32_t usage)
 {
     // Create the dictionary.
-    CFMutableDictionaryRef dict = CFDictionaryCreateMutable(kCFAllocatorDefault,
-                                                            2,
-                                                            &kCFTypeDictionaryKeyCallBacks,
-                                                            &kCFTypeDictionaryValueCallBacks);
+    auto dict = CFPtr<CFMutableDictionaryRef>(
+        CFDictionaryCreateMutable(kCFAllocatorDefault, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     // Add the page value.
     auto value = CFPtr<CFNumberRef>(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &page));
-    CFDictionarySetValue(dict, CFSTR(kIOHIDDeviceUsagePageKey), value.get());
+    CFDictionarySetValue(dict.get(), CFSTR(kIOHIDDeviceUsagePageKey), value.get());
 
     // Add the usage value (which is only valid if page value exists).
     value = CFPtr<CFNumberRef>(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &usage));
-    CFDictionarySetValue(dict, CFSTR(kIOHIDDeviceUsageKey), value.get());
+    CFDictionarySetValue(dict.get(), CFSTR(kIOHIDDeviceUsageKey), value.get());
 
     return dict;
 }
@@ -929,7 +927,7 @@ void HIDInputManager::freeUp()
 CFPtr<CFSetRef> HIDInputManager::copyDevices(std::uint32_t page, std::uint32_t usage)
 {
     // Filter and keep only the requested devices
-    const auto mask = CFPtr<CFDictionaryRef>(copyDevicesMask(page, usage));
+    const auto mask = copyDevicesMask(page, usage);
 
     IOHIDManagerSetDeviceMatching(m_manager.get(), mask.get());
 

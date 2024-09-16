@@ -72,11 +72,9 @@ HIDJoystickManager::HIDJoystickManager()
 {
     m_manager = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
 
-    const auto mask0 = CFPtr<CFDictionaryRef>(
-        HIDInputManager::copyDevicesMask(kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick));
+    const auto mask0 = HIDInputManager::copyDevicesMask(kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick);
 
-    const auto mask1 = CFPtr<CFDictionaryRef>(
-        HIDInputManager::copyDevicesMask(kHIDPage_GenericDesktop, kHIDUsage_GD_GamePad));
+    const auto mask1 = HIDInputManager::copyDevicesMask(kHIDPage_GenericDesktop, kHIDUsage_GD_GamePad);
 
     std::array maskArray = {mask0.get(), mask1.get()};
     const auto mask      = CFPtr<CFArrayRef>(
